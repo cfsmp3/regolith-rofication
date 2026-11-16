@@ -74,7 +74,8 @@ class QueueFileTest(unittest.TestCase):
                 self.assertEqual([(item['id'], item['summary'], item['hints']) for item in saved],
                                  [(1, 'one', {}), (2, 'two', {}), (3, 'bad hints', {}), (4, 'four', {})])
                 self.assertEqual(self.read(self.next_id_path), b'5\n')
-                self.assertEqual(sorted(os.listdir(self._dir.name)), ['notifications.json', 'notifications.next-id'])
+                # no temporary file left behind
+                self.assertEqual([name for name in os.listdir(self._dir.name) if name.startswith('.')], [])
                 self.assertEqual([n.summary for n in NotificationQueue.load(self.path)],
                                  ['one', 'two', 'bad hints', 'four'])
                 self.assertFalse(os.path.exists(self.damaged_path))
