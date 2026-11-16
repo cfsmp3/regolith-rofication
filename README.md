@@ -51,6 +51,14 @@ The components consist of:
 dbus. Notifications are internally queued (and preserved) and can be viewed by a client via a
 unix-socket. It is just a simple storage for notifications.
 
+The queue is saved to `~/.cache/rofication/notifications.json` when the daemon stops, and read back
+when it starts. A save replaces the file in one step, so a save that fails or is interrupted leaves
+the previous queue in place. When the file is damaged, the daemon restores every notification it can
+still read, also after the damage, and keeps a copy of the file next to it as
+`notifications.json.damaged`. The next notification number is kept beside the queue in
+`notifications.next-id`; when that file is missing or damaged, numbering continues after the restored
+notifications, and the next save puts the file right.
+
 Some applications should only ever have one notification in the queue: a new notification from
 them replaces the previous one. The daemon reads this list of application names (comma-separated)
 at startup from the Xresource `rofication.notify.single_notification_apps`, or from the environment
